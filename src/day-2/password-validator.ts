@@ -1,28 +1,30 @@
+import { match } from 'assert';
 import fs from 'fs';
 
 interface PasswordConfig {
     requiredCharacter: {
         character: string,
-        minimum: number,
-        maximum: number
+        requirementOne: number,
+        requirementTwo: number
     };
     password: string;
 }
 
 export class PasswordValidator {
-    readonly _passwordConfigs: PasswordConfig[] = [];
-
+    private readonly _file: string;
+    private get _passwordConfigs(): PasswordConfig[] {
+        return this._file.trim().split(/\n/g).map(x => this._convertStringToPasswordConfig(x)) as PasswordConfig[];
+    }
     constructor() {
-        const file = fs.readFileSync('./src/day-2/assets/passwords.txt').toString();
-        this._passwordConfigs = file.trim().split(/\n/g).map(x => this._convertStringToPasswordConfig(x)) as PasswordConfig[];
+        this._file = fs.readFileSync('./src/day-2/assets/passwords.txt').toString();
     }
 
-    getNoOfValidPasswords(): number {
+    getNoOfValidPasswordsByCharacterCount(): number {
         let validPasswords = 0;
 
-        for(const passwordConfig of this._passwordConfigs) {
+        for (const passwordConfig of this._passwordConfigs) {
             const letterCount = this._getCharacterCountInPassword(passwordConfig.password, passwordConfig.requiredCharacter.character);
-            if (letterCount >= passwordConfig.requiredCharacter.minimum && letterCount <= passwordConfig.requiredCharacter.maximum) {
+            if (letterCount >= passwordConfig.requiredCharacter.requirementOne && letterCount <= passwordConfig.requiredCharacter.requirementTwo) {
                 validPasswords++;
             }
         }
@@ -30,10 +32,29 @@ export class PasswordValidator {
         return validPasswords;
     }
 
+    getNoOfValidPasswordsByCharacterIndex(): number {
+        let validPasswords = 0;
+
+        for (const passwordConfig of this._passwordConfigs) {
+            
+            const requiredCharacter = passwordConfig.requiredCharacter;
+            const matchFirstRequirement = passwordConfig.password.charAt(requiredCharacter.requirementOne - 1) === requiredCharacter.character;
+            const matchSecondRequirement = passwordConfig.password.charAt(requiredCharacter.requirementTwo - 1) === requiredCharacter.character;
+
+            if ((matchFirstRequirement || matchSecondRequirement) && (matchFirstRequirement !== matchSecondRequirement)) {
+                validPasswords++;
+            }
+        }
+
+        return validPasswords;
+    }
+
+
+
     private _getCharacterCountInPassword(password: string, character: string): number {
         let letterCount = 0;
         for (let i = 0; i < password.length; i++) {
-            if(password.charAt(i) === character) {
+            if (password.charAt(i) === character) {
                 letterCount++;
             }
         }
@@ -48,8 +69,8 @@ export class PasswordValidator {
         if (match) {
             return {
                 requiredCharacter: {
-                    minimum: +match[1],
-                    maximum: +match[2],
+                    requirementOne: +match[1],
+                    requirementTwo: +match[2],
                     character: match[3]
 
                 },

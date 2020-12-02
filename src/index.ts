@@ -10,4 +10,5 @@ console.log("Solution day 1-2:", reportRepair.findTheThreeNumbers());
 
 /// Day 2:
 const passwordValidator = new PasswordValidator();
-console.log("Solution day 2-1:", passwordValidator.getNoOfValidPasswords());
+console.log("Solution day 2-1:", passwordValidator.getNoOfValidPasswordsByCharacterCount());
+console.log("Solution day 2-2:", passwordValidator.getNoOfValidPasswordsByCharacterIndex());
