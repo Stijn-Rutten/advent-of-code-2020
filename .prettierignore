@@ -1,7 +1,9 @@
-/dist
+/build
 /coverage
 /.cache
 .vscode/chrome
 CHANGELOG.md
+README.md
 /target
 /.nyc_output
+/node_modules
