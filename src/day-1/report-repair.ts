@@ -1,15 +1,10 @@
-import fs from 'fs';
+import { AOCExercise } from '../aoc-exercise';
 
-export class ReportRepair {
+export class ReportRepair extends AOCExercise {
   private readonly _numbers: number[] = [];
   constructor() {
-    const file = fs
-      .readFileSync('./src/day-1/assets/expense-report.txt')
-      .toString();
-    this._numbers = file
-      .trim()
-      .split(/\n/g)
-      .map((x) => +x);
+    super(1);
+    this._numbers = this._input.map((x: string) => +x);
   }
   findTheTwoNumbers(): number {
     for (const number of this._numbers) {
